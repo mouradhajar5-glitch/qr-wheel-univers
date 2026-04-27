@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>🎁 L'Univers - Gagnez un lot</title>
+
+<style>
+body {
+  margin:0;
+  font-family: 'Arial';
+  background: radial-gradient(circle, #1a1a1a, #000);
+  color:white;
+  text-align:center;
+}
+
+.container {
+  padding:40px;
+}
+
+button {
+  padding:15px 30px;
+  border:none;
+  border-radius:10px;
+  font-size:18px;
+  cursor:pointer;
+  margin:10px;
+}
+
+.primary {
+  background: gold;
+  color:black;
+}
+
+.secondary {
+  background:#333;
+  color:white;
+}
+
+#wheel {
+  width:300px;
+  height:300px;
+  border-radius:50%;
+  border:8px solid gold;
+  margin:20px auto;
+  position:relative;
+  transition: transform 4s ease-out;
+}
+
+.segment {
+  position:absolute;
+  width:50%;
+  height:50%;
+  background:red;
+  transform-origin:100% 100%;
+}
+
+.pointer {
+  width:0;
+  height:0;
+  border-left:15px solid transparent;
+  border-right:15px solid transparent;
+  border-bottom:25px solid gold;
+  margin:auto;
+}
+
+.hidden { display:none; }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🎁 Tente ta chance</h1>
+
+<div id="step1">
+<button class="primary" onclick="nextStep()">🎡 Jouer</button>
+</div>
+
+<div id="step2" class="hidden">
+<p>⭐ Aide-nous avec un avis</p>
+<button class="primary" onclick="leaveReview()">Laisser un avis</button><br>
+<button class="secondary" onclick="showWheel()">J'ai laissé mon avis</button>
+</div>
+
+<div id="wheelSection" class="hidden">
+<div class="pointer"></div>
+<div id="wheel"></div>
+<button class="primary" onclick="spin()">SPIN</button>
+<p id="result"></p>
+</div>
+
+</div>
+
+<script>
+
+// 🎯 lots avec probabilités
+const rewards = [
+  {name:"🍾 Champagne", prob:0.001},
+  {name:"🥂 Coupe champagne", prob:0.005},
+  {name:"🍷 Rosé Corse", prob:0.0033},
+  {name:"🍹 Spritz", prob:0.01},
+  {name:"🍸 Mojito", prob:0.007},
+  {name:"🍷 Verre de vin", prob:0.02},
+  {name:"🥩 Rillettes", prob:0.025},
+  {name:"🥜 Pistaches", prob:0.10},
+  {name:"🫒 Olives", prob:0.20},
+  {name:"🥃 Shooter", prob:0.30},
+  {name:"😢 Rien", prob:0.3297}
+];
+
+// navigation
+function nextStep(){
+  document.getElementById("step1").classList.add("hidden");
+  document.getElementById("step2").classList.remove("hidden");
+}
+
+function leaveReview(){
+  window.open("https://g.page/r/YOUR_GOOGLE_LINK/review","_blank");
+}
+
+function showWheel(){
+  document.getElementById("step2").classList.add("hidden");
+  document.getElementById("wheelSection").classList.remove("hidden");
+}
+
+// 🎯 tirage pondéré
+function getReward(){
+  let rand = Math.random();
+  let sum = 0;
+
+  for(let r of rewards){
+    sum += r.prob;
+    if(rand <= sum){
+      return r.name;
+    }
+  }
+}
+
+// 🎡 animation
+let rotation = 0;
+
+function spin(){
+
+  if(localStorage.getItem("played")){
+    alert("Déjà joué !");
+    return;
+  }
+
+  localStorage.setItem("played","true");
+
+  let result = getReward();
+
+  rotation += 1440 + Math.floor(Math.random()*360);
+  document.getElementById("wheel").style.transform = `rotate(${rotation}deg)`;
+
+  setTimeout(()=>{
+    document.getElementById("result").innerText = "🎉 " + result;
+  },4000);
+}
+
+</script>
+
+</body>
+</html>
